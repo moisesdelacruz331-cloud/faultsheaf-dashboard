@@ -1,0 +1,200 @@
+{
+  "data": {
+    "raw_parsed_rows": 81742,
+    "deduplicated_events": 81672,
+    "events_in_ph_bounding_box": 80993,
+    "years_present": [
+      2018,
+      2019,
+      2023,
+      2024,
+      2025,
+      2026
+    ],
+    "years_missing": [
+      2020,
+      2021,
+      2022
+    ],
+    "magnitude_min": 1.0,
+    "magnitude_max": 7.8,
+    "magnitude_bins": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "magnitude_hist": [
+      20594,
+      44114,
+      13549,
+      2383,
+      306,
+      42,
+      4
+    ],
+    "events_m5_plus": 352,
+    "events_m6_plus": 46,
+    "events_m7_plus": 4
+  },
+  "splits": {
+    "training": {
+      "date_range": "< 2025-01-01",
+      "n_all_mag": 41382,
+      "years": "2018, 2019, 2023, 2024"
+    },
+    "validation": {
+      "date_range": "2025-01-01 to 2025-12-31",
+      "n_all_mag": 21625,
+      "n_target_m3plus": 3576
+    },
+    "prospective_test": {
+      "date_range": "2026-01-01 to 2026-08-01",
+      "n_all_mag": 15797,
+      "n_target_m3plus": 2892
+    }
+  },
+  "grid": {
+    "n_lat_bins": 180,
+    "n_lon_bins": 120,
+    "n_cells": 21600,
+    "n_edges": 42900,
+    "resolution_deg": 0.1
+  },
+  "prospective_results": {
+    "Uniform Null": {
+      "Ig": 0.0,
+      "AUC": 0.505,
+      "Hit10": 10.4,
+      "Hit30": 28.6
+    },
+    "Smoothed Seismicity": {
+      "Ig": 1.172,
+      "AUC": 0.872,
+      "Hit10": 35.5,
+      "Hit30": 89.0
+    },
+    "ETAS-lite": {
+      "Ig": 1.024,
+      "AUC": 0.876,
+      "Hit10": 35.9,
+      "Hit30": 88.9
+    },
+    "Isotropic Graph Diffusion": {
+      "Ig": 1.221,
+      "AUC": 0.878,
+      "Hit10": null,
+      "Hit30": null
+    },
+    "Sheaf-Diffusion (this study)": {
+      "Ig": 1.238,
+      "AUC": 0.884,
+      "Hit10": 42.2,
+      "Hit30": 89.1
+    }
+  },
+  "validation_vs_test": {
+    "Smoothed Seismicity": {
+      "val_ig": 1.586,
+      "test_ig": 1.172,
+      "change": -0.414
+    },
+    "ETAS-lite": {
+      "val_ig": 1.655,
+      "test_ig": 1.024,
+      "change": -0.631
+    },
+    "Sheaf-Diffusion": {
+      "val_ig": 1.648,
+      "test_ig": 1.238,
+      "change": -0.41
+    }
+  },
+  "significance": {
+    "sheaf_minus_smoothed": {
+      "mean_diff": 0.0636,
+      "ci95": [
+        0.0489,
+        0.0771
+      ],
+      "p_ttest": 5.7e-18
+    },
+    "sheaf_minus_etaslite": {
+      "mean_diff": 0.2132,
+      "ci95": [
+        0.1869,
+        0.2399
+      ],
+      "p_ttest": 3.4e-56
+    },
+    "mcnemar_hit30_sheaf_vs_smoothed": {
+      "p_value": 0.911
+    }
+  },
+  "ablation": {
+    "graph_diffusion_effect": {
+      "delta_ig": 0.049,
+      "ci95": [
+        0.041,
+        0.057
+      ],
+      "p_ttest": 1.4e-30,
+      "description": "Smoothed Seismicity -> Isotropic Graph Diffusion"
+    },
+    "anisotropy_effect": {
+      "delta_ig": 0.016,
+      "ci95": [
+        0.005,
+        0.028
+      ],
+      "p_ttest": 0.007,
+      "description": "Isotropic Graph Diffusion -> Sheaf-Diffusion"
+    }
+  },
+  "shuffle_test": {
+    "test_period": {
+      "real_ig": 1.238,
+      "shuffled_mean": 1.347,
+      "shuffled_sd": 0.02,
+      "n_shuffles": 20
+    },
+    "validation_period": {
+      "real_ig": 1.648,
+      "shuffled_mean": 1.674,
+      "shuffled_sd": 0.008,
+      "n_shuffles": 10
+    },
+    "dirichlet_energy": {
+      "real": 1.643e-07,
+      "shuffled_range": [
+        1.331e-07,
+        1.422e-07
+      ]
+    }
+  },
+  "complexity": {
+    "sparse_solve_seconds": 0.2456,
+    "naive_pairwise_extrapolated_seconds": 217.3,
+    "speedup_factor": 885,
+    "note": "Naive pairwise timed on 5,000-event subsample and extrapolated by N^2 scaling; not directly measured at full scale."
+  },
+  "locked_hyperparameters": {
+    "Smoothed Seismicity": {
+      "sigma": 6.0,
+      "epsilon": 0.005
+    },
+    "Isotropic Graph Diffusion": {
+      "t": 20,
+      "epsilon": 0.0002
+    },
+    "Sheaf-Diffusion": {
+      "t": 576,
+      "epsilon": 0.0005,
+      "sigma_theta_deg": 25
+    }
+  }
+}
