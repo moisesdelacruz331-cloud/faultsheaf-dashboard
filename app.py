@@ -285,13 +285,13 @@ elif page == "2. Interactive Hazard Map":
         cbar_title = "probability"
 
     fig = go.Figure()
-    fig.add_trace(go.Densitymapbox(
+    fig.add_trace(go.Densitymap(
         lat=lat_flat, lon=lon_flat, z=z_plot,
         radius=6, colorscale="Inferno", colorbar=dict(title=cbar_title),
         opacity=0.85,
     ))
     if show_events:
-        fig.add_trace(go.Scattermapbox(
+        fig.add_trace(go.Scattermap(
             lat=EVENTS["lat"], lon=EVENTS["lon"],
             mode="markers",
             marker=dict(size=5, color="#5ad1e6", opacity=0.75),
@@ -305,7 +305,7 @@ elif page == "2. Interactive Hazard Map":
             f"https://{sub}.basemaps.cartocdn.com/rastertiles/dark_all/{{z}}/{{x}}/{{y}}.png?key={CARTO_API_KEY}"
             for sub in ["a", "b", "c", "d"]
         ]
-        mapbox_config = dict(
+        map_config = dict(
             style="white-bg",
             layers=[{
                 "below": "traces",
@@ -316,14 +316,14 @@ elif page == "2. Interactive Hazard Map":
             zoom=4.3,
         )
     else:
-        mapbox_config = dict(
+        map_config = dict(
             style="open-street-map",
             center=dict(lat=12.5, lon=122.0),
             zoom=4.3,
         )
 
     fig.update_layout(
-        mapbox=mapbox_config,
+        map=map_config,
         margin=dict(l=0, r=0, t=0, b=0),
         height=650,
         showlegend=show_events,
@@ -596,12 +596,12 @@ elif page == "7. Live 1-Week Forecast Generator (Upload)":
 
     # Map Rendering
     fig = go.Figure()
-    fig.add_trace(go.Densitymapbox(
+    fig.add_trace(go.Densitymap(
         lat=lat_flat, lon=lon_flat, z=z_log,
         radius=6, colorscale="Inferno", colorbar=dict(title="log₁₀(probability)"),
         opacity=0.85,
     ))
-    fig.add_trace(go.Scattermapbox(
+    fig.add_trace(go.Scattermap(
         lat=active_events["lat"], lon=active_events["lon"],
         mode="markers",
         marker=dict(size=6, color="#5ad1e6", opacity=0.8),
@@ -618,16 +618,16 @@ elif page == "7. Live 1-Week Forecast Generator (Upload)":
             f"https://{sub}.basemaps.cartocdn.com/rastertiles/dark_all/{{z}}/{{x}}/{{y}}.png?key={CARTO_API_KEY}"
             for sub in ["a", "b", "c", "d"]
         ]
-        mb_config = dict(
+        map_config = dict(
             style="white-bg",
             layers=[{"below": "traces", "sourcetype": "raster", "source": carto_urls}],
             center=dict(lat=12.5, lon=122.0), zoom=4.3,
         )
     else:
-        mb_config = dict(style="open-street-map", center=dict(lat=12.5, lon=122.0), zoom=4.3)
+        map_config = dict(style="open-street-map", center=dict(lat=12.5, lon=122.0), zoom=4.3)
 
     fig.update_layout(
-        mapbox=mb_config, margin=dict(l=0, r=0, t=0, b=0), height=650,
+        map=map_config, margin=dict(l=0, r=0, t=0, b=0), height=650,
         showlegend=True, legend=dict(bgcolor="rgba(0,0,0,0.5)", font=dict(color="white")),
     )
     st.plotly_chart(fig, use_container_width=True)
@@ -659,8 +659,8 @@ elif page == "7. Live 1-Week Forecast Generator (Upload)":
 
     st.markdown("#### Top Projected High-Hazard Hotspots (Next 7 Days)")
     
-    # Extract top 5 risk cells
-    flat_indices = np.argsort(z_flat)[::-1][:5]
+    # Extract top 20 risk cells
+    flat_indices = np.argsort(z_flat)[::-1][:20]
     hotspot_rows = []
     for rank, idx in enumerate(flat_indices, 1):
         r_i = idx // 120
